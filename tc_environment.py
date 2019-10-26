@@ -116,5 +116,62 @@ class TicTacToeEnvironment:
 
         return new_state
 
+    def step(self, curr_state, curr_action):
+        """Takes current state and action and returns the next state, reward and whether the state is terminal. Hint: First, check the board position after
+        agent's move, whether the game is won/loss/tied. Then incorporate environment's move and again check the board status.
+        Example: Input state- [1, 2, 3, 4, nan, nan, nan, nan, nan], action- [7, 9] or [position, value]
+        Output = ([1, 2, 3, 4, nan, nan, nan, 9, nan], -1, False)"""
+
+        # generate new state after agent's move
+        new_state = self.state_transition(curr_state, curr_action)
+
+        # check if terminal state has been reached i.e.
+        # either agent has won or it's a tie
+        has_reached_terminal_state, message = self.is_terminal(curr_state)
+
+        if has_reached_terminal_state:
+            # set correct reward and message when game proceeds to a terminal state due to agent move
+            if message == "Win":
+                reward = 10
+                game_message = "Agent Won!"
+            else:
+                reward = 0
+                game_message = "It's a tie!"
+
+            return (new_state, reward, has_reached_terminal_state, game_message)
+        else:
+            # game is not in terminal state
+
+            # generate random environment action
+            _, env_actions = self.action_space(new_state)
+            env_action = random.choice([ac for i, ac in enumerate(env_actions)])
+
+            # move to new state due to environment action
+            new_state_post_env_action = self.state_transition(new_state, env_action)
+
+            # check if environment action results in a terminal state
+            has_reached_terminal_state, message = self.is_terminal(
+                new_state_post_env_action
+            )
+
+            # decide whether environment has won, it's a tie or game can continue further
+            if has_reached_terminal_state:
+                if message == "Win":
+                    reward = -10
+                    game_message = "Environment Won!"
+                else:
+                    reward = 0
+                    game_message = "It's a tie!"
+            else:
+                reward = -1
+                game_message = "Resume"
+
+            return (
+                new_state_post_env_action,
+                reward,
+                has_reached_terminal_state,
+                game_message,
+            )
+
     def reset(self):
         return self.state
