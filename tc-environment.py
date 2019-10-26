@@ -71,7 +71,8 @@ class TicTacToeEnvironment:
         used_values = [val for val in curr_state if not np.isnan(val)]
 
         # RL agent is only allowed to play odd numbers : {1,3,5,7,9}
-        # fetch numbers which an agent can still play
+        # fetch numbers which an agent can still play i.e.
+        # odd numbers which have not been played by the agent so far
         agent_values = [
             val
             for val in self.all_possible_numbers
@@ -79,7 +80,8 @@ class TicTacToeEnvironment:
         ]
 
         # environment is only allowed to play even numbers : {2,4,6,8}
-        # fetch numbers which environment can still play
+        # fetch numbers which environment can still play i.e.
+        # even numbers which have not been played by the environment so far
         env_values = [
             val
             for val in self.all_possible_numbers
@@ -87,6 +89,32 @@ class TicTacToeEnvironment:
         ]
 
         return (agent_values, env_values)
+
+    def action_space(self, curr_state):
+        """Takes the current state as input and returns all possible actions, i.e, all combinations of allowed positions and allowed values"""
+
+        allowed_positions = self.allowed_positions(curr_state)
+        allowed_values = self.allowed_values(curr_state)
+
+        # action space of a given space is the cartesian product of all allowed positions and allowed values
+        agent_actions = product(allowed_positions, allowed_values[0])
+        env_actions = product(allowed_positions, allowed_values[1])
+
+        return (agent_actions, env_actions)
+
+    def state_transition(self, curr_state, curr_action):
+        """Takes current state and action and returns the board position just after agent's move.
+        Example: Input state- [1, 2, 3, 4, nan, nan, nan, nan, nan], action- [7, 9] or [position, value]
+        Output = [1, 2, 3, 4, nan, nan, nan, 9, nan]
+        """
+
+        # current new state variable from existing state
+        new_state = [i for i in curr_state]
+
+        # update current action
+        new_state[curr_action[0]] = curr_action[1]
+
+        return new_state
 
     def reset(self):
         return self.state
