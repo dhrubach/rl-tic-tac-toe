@@ -43,6 +43,9 @@ class TicTacToeEnvironmentTest(unittest.TestCase):
         # state_transition
         self.state_old_state = [1, 3, np.nan, np.nan, 2, 8, np.nan, np.nan, np.nan]
 
+        # step
+        self.state_curr_state = [4, 7, 6, 1, np.nan, 8, 9, 3, 2]
+
         self.tic_tac_toe_env = TicTacToeEnvironment()
 
     def test_is_winning(self):
@@ -109,6 +112,19 @@ class TicTacToeEnvironmentTest(unittest.TestCase):
         self.assertListEqual(
             t_new_state, [1, 3, np.nan, 5, 2, 8, np.nan, np.nan, np.nan]
         )
+
+    def test_step(self):
+        (
+            new_state,
+            reward,
+            has_reached_terminal_state,
+            game_message,
+        ) = self.tic_tac_toe_env.step(self.state_curr_state, (4, 5))
+
+        self.assertEqual(new_state, [4, 7, 6, 1, 5, 8, 9, 3, 2])
+        self.assertEqual(reward, 10)
+        self.assertTrue(has_reached_terminal_state)
+        self.assertEqual(game_message, "Agent Won!")
 
 
 if __name__ == "__main__":
