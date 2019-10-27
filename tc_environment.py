@@ -127,7 +127,7 @@ class TicTacToeEnvironment:
 
         # check if terminal state has been reached i.e.
         # either agent has won or it's a tie
-        has_reached_terminal_state, message = self.is_terminal(curr_state)
+        has_reached_terminal_state, message = self.is_terminal(new_state)
 
         if has_reached_terminal_state:
             # set correct reward and message when game proceeds to a terminal state due to agent move
